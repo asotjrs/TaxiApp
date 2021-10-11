@@ -1,45 +1,40 @@
-import React, {useState, useEffect} from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  useColorScheme,
-  View,
-  Text,
-} from 'react-native';
+import React, {Component} from 'react';
+import {SafeAreaView, StyleSheet, View, TextInput} from 'react-native';
 import io from 'socket.io-client';
 
-const App: () => Node = () => {
-  useEffect(() => {
-    const socket = io('http://192.168.1.3:3000');
-  }, []);
+class App extends Component {
+  constructor(props) {
+    super(props);
 
-  return (
-    <SafeAreaView>
-      <View>
-        <Text>{'Hola'}</Text>
-      </View>
-    </SafeAreaView>
-  );
-};
+    this.state = {
+      message: '',
+    };
+  }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+  componentDidMount() {
+    this.socket = io('http://192.168.1.3:3000');
+  }
+
+  submitChatMessage = () => {
+    this.socket.emit('chat message is :', this.state.message);
+  };
+  render() {
+    return (
+      <SafeAreaView>
+        <View>
+          <TextInput
+            autoCorrect={false}
+            value={this.state.message}
+            style={{height: 40, borderWidth: 2}}
+            onChangeText={message => this.setState({message})}
+            onSubmitEditing={this.submitChatMessage}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+}
+
+const styles = StyleSheet.create({});
 
 export default App;
